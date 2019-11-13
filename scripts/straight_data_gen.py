@@ -24,7 +24,7 @@ class straight_crash:
 		self.pitch = 0
 		self.roll = 0
 		self.flight_num = 0
-		self.file_path = '/home/anthony/airsim_ws/images/flight'
+		self.file_path = os.path.abspath(os.path.join(os.path.dirname( __file__ ), '..', 'straight_path_images/flight'))
 		self.time_step = .15 #Time between images taken 
 		self.im_list = []
 	#Define initial position and heading and set pose to match these, should call this after every colision
@@ -80,7 +80,7 @@ class straight_crash:
 		#Saves images stored in im_list from flight 
 		if len(self.im_list) >= 10:
 			for idx, im in enumerate(self.im_list[0:5]):
-				airsim.write_file(os.path.normpath(self.file_path + "_" + "safe"  +str(self.flight_num)  + '_' + str(idx)  + '.png'), im.image_data_uint8)
+				airsim.write_file(os.path.normpath(self.file_path + "_" + "safe"  + '_' +  str(self.flight_num)  + '_' + str(idx)  + '.png'), im.image_data_uint8)
 			for idx, im in enumerate(self.im_list[len(self.im_list) - 5:]):
 				airsim.write_file(os.path.normpath(self.file_path + "_"  + "danger" + str(self.flight_num)  + '_' + str(idx)  + '.png'), im.image_data_uint8)
 
