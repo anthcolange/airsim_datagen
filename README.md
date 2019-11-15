@@ -17,3 +17,6 @@ Each of these trajectories has the fpv frames of the drone saved and the first a
       -flight_num is which flight the image corresponds to, using 0 indexing  
       -im_num is which frame of {danger, safe} the image is, using 0 indexing
       
+## Image settings
+1. Images changed to VGA 640x480 by settings.json
+2. Replace files of the same name, stored in ~/Documents/AirSim with this one.
