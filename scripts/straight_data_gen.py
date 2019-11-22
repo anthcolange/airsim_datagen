@@ -16,8 +16,8 @@ class straight_crash:
 		self.client.enableApiControl(True)
 		self.client.armDisarm(True)
 		self.client.takeoffAsync().join()
-		self.z_height = -10 #Define height to run trials at  
-		self.speed = 5 #Define speed to fly straight at
+		self.z_height = -.5 #Define height to run trials at  
+		self.speed = 2.5 #Define speed to fly straight at
 		self.alpha = 5000 #Scale's how far ahead next waypoint is, where x_new = x - alpha*sin(theta), y_new = y + alpha*cos(theta)
 		self.x_min = -.5
 		self.x_max = .5
@@ -25,8 +25,9 @@ class straight_crash:
 		self.y_max = .75
 		self.pitch = 0
 		self.roll = 0
+		self.alpha = 5000 # = 0
 		self.flight_num = 0
-		self.time_step = .15 #Time between images taken 
+		self.time_step = .07 #Time between images taken 
 		self.num_frames = 5 #How many frames we want of safe and dangerous for each flight
 		self.last_collision_stamp = 0 #initialize timestep for collision
 		self.cam_im_list = []
@@ -45,10 +46,9 @@ class straight_crash:
 		pose = airsim.Pose(position, heading)
 		print("set_yaw")
 		self.client.simSetVehiclePose(pose, True) #Set yaw angle
-		self.client.moveToPositionAsync(x,y, self.z_height, self.speed)
-		time.sleep(.5)
+		self.client.moveToPositionAsync(x,y, self.z_height, .5).join()
 		self.client.hoverAsync()
-		time.sleep(.5)
+		time.sleep(2)
 		#Generate waypoint very far in direction drone is facing
 		self.waypoint(x, y, yaw)
 
@@ -66,8 +66,8 @@ class straight_crash:
 			self.im_store()
 			collision_info = self.client.simGetCollisionInfo() #Log collision info
 			new_time_stamp = collision_info.time_stamp
-			if collision_info.has_collided: ##Apparently might need to change depending on if windows or not 
-			#if new_time_stamp != self.last_collision_stamp and new_time_stamp != 0 : #Check if collision has new timestamp to validate new collision happened
+			#if collision_info.has_collided: ##Apparently might need to change depending on if windows or not 
+			if (new_time_stamp != self.last_collision_stamp and new_time_stamp != 0) or collision_info.has_collided: #Check if collision has new timestamp to validate new collision happened
 	 			#self.im_thread.cancel()#Kill thread 
 	 			self.image_handle(collision_info) #Save relevant images to a file
 	 			self.last_collision_stamp = new_time_stamp
