@@ -1,0 +1,12 @@
+{
+  "SeeDocsAt": "https://github.com/Microsoft/AirSim/blob/master/docs/settings.md",
+  "SettingsVersion": 1.2,
+  "CameraDefaults": {
+    "CaptureSettings": [
+      {
+        "Width": 640,
+        "Height": 480
+      }
+    ]
+}
+}
