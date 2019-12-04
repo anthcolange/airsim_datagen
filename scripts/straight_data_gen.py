@@ -124,6 +124,7 @@ class straight_crash:
 				depth_2d = depth_float.reshape(depth.height, depth.width)
 				depth_im = np.array(depth_2d * 255, dtype=np.uint8)
 				cv2.imwrite(os.path.normpath(os.path.join(self.fold_path,'flight' "_"  + "depth" + "_" +"danger"  + '_' +  str(self.flight_num)  + '_' + str(idx) + "_" +  str(time_to_collision) + '.png')), depth_im)
+				state_ind = len(self.state_list) - self.num_frames + idx #Want state corresponding to 
 				linear_velocity = self.state_list[idx].kinematics_estimated.linear_velocity
 				angular_velocity = self.state_list[idx].kinematics_estimated.angular_velocity
 				x_lin_vel, y_lin_vel, z_lin_vel, x_ang_vel, y_ang_vel, z_ang_vel = linear_velocity.x_val, linear_velocity.y_val, linear_velocity.z_val, angular_velocity.x_val, angular_velocity.y_val, angular_velocity.z_val
