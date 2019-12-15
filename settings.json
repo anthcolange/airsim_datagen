@@ -2,11 +2,44 @@
   "SeeDocsAt": "https://github.com/Microsoft/AirSim/blob/master/docs/settings.md",
   "SettingsVersion": 1.2,
   "CameraDefaults": {
-    "CaptureSettings": [
-      {
-        "Width": 640,
-        "Height": 480
-      }
-    ]
+   "CaptureSettings": [
+  {
+    "ImageType": 0,
+    "Width": 640,
+    "Height": 480
+
+   },
+{
+    "ImageType": 1,
+    "Width": 640,
+    "Height": 480
+
+   },
+   {
+    "ImageType": 2,
+    "Width": 640,
+    "Height": 480
+
+   },
+{
+    "ImageType": 3,
+    "Width": 640,
+    "Height": 480
+
+   },
+{
+    "ImageType": 4,
+    "Width": 640,
+    "Height": 480
+
+   },
+   {
+    "ImageType": 5,
+    "Width": 640,
+    "Height": 480
+
+   }
+]
 }
 }
+

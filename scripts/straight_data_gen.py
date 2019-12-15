@@ -8,6 +8,7 @@ import threading
 import os 
 import cv2
 import csv
+from random import randrange
 # connect to the AirSim simulator
 class straight_crash:
 	def __init__(self):	
@@ -16,18 +17,18 @@ class straight_crash:
 		self.client.enableApiControl(True)
 		self.client.armDisarm(True)
 		self.client.takeoffAsync().join()
-		self.z_height = -.5 #Define height to run trials at  
-		self.speed = 2.5 #Define speed to fly straight at
+		self.z_height = -1.1 #Define height to run trials at  ##-.5 for realistic environment and xx for office space
+		self.speed = 5 #Define speed to fly straight at
 		self.alpha = 5000 #Scale's how far ahead next waypoint is, where x_new = x - alpha*sin(theta), y_new = y + alpha*cos(theta)
-		self.x_min = -.5
-		self.x_max = .5
-		self.y_min = -.75
-		self.y_max = .75
+		self.x_min = -2
+		self.x_max = 2
+		self.y_min = -2.5
+		self.y_max = 2.5
 		self.pitch = 0
 		self.roll = 0
 		self.alpha = 5000 # = 0
 		self.flight_num = 0
-		self.time_step = .07 #Time between images taken 
+		self.time_step = .15 #Time between images taken 
 		self.num_frames = 5 #How many frames we want of safe and dangerous for each flight
 		self.last_collision_stamp = 0 #initialize timestep for collision
 		self.cam_im_list = []
@@ -92,17 +93,19 @@ class straight_crash:
 		#Saves images stored in im_list from flight and logs times in nanoseconds
 		#Depth image handling: https://github.com/microsoft/AirSim/issues/921
 		if len(self.cam_im_list) >= 2*self.num_frames:
+			start_ind = randrange(len(self.cam_im_list) - 2*self.num_frames + 1) #Generate random index to begin grabbing frames from 
 			collision_time = collision_info.time_stamp
-			for idx, im in enumerate(self.cam_im_list[0:self.num_frames]):
+			for idx, im in enumerate(self.cam_im_list[start_ind:start_ind + self.num_frames ]):
 				time_to_collision = collision_time - im[0].time_stamp #time stamp the same for im[0] and im[1]
 				airsim.write_file(os.path.normpath(os.path.join(self.fold_path, 'flight' + "_" + "rgb" + "_" +"safe"  + '_' +  str(self.flight_num)  + '_' + str(idx) + "_" + str(time_to_collision) + '.png')), im[0].image_data_uint8)
 				depth = im[1]
 				depth_float = np.array(depth.image_data_float, dtype=np.float32)
 				depth_2d = depth_float.reshape(depth.height, depth.width)
-				depth_im = np.array(depth_2d * 255, dtype=np.uint8)
+				depth_im = np.array(depth_2d * 65535, dtype=np.uint16)
 				cv2.imwrite(os.path.normpath(os.path.join(self.fold_path, 'flight' +  "_" + "depth" + "_" +"safe"  + '_' +  str(self.flight_num)  + '_' + str(idx)+  "_" + str(time_to_collision) + '.png')), depth_im)
-				linear_velocity = self.state_list[idx].kinematics_estimated.linear_velocity
-				angular_velocity = self.state_list[idx].kinematics_estimated.angular_velocity
+				state_ind = start_ind + idx #find index of state being used 
+				linear_velocity = self.state_list[state_ind].kinematics_estimated.linear_velocity
+				angular_velocity = self.state_list[state_ind].kinematics_estimated.angular_velocity
 				x_lin_vel, y_lin_vel, z_lin_vel, x_ang_vel, y_ang_vel, z_ang_vel = linear_velocity.x_val, linear_velocity.y_val, linear_velocity.z_val, angular_velocity.x_val, angular_velocity.y_val, angular_velocity.z_val
 				row = [str(self.flight_num), 'safe', str(idx),str(x_lin_vel),str(y_lin_vel), str(z_lin_vel), str(x_ang_vel), str(y_ang_vel), str(z_ang_vel)]
 				with open(self.csv_path, 'a') as csvFile:
@@ -118,15 +121,15 @@ class straight_crash:
 				#airsim.write_file(os.path.normpath(self.file_path + "_" + "depth" + "_" +"safe"  + '_' +  str(self.flight_num)  + '_' + str(idx)  + '.pfm'), depth)
 			for idx, im in enumerate(self.cam_im_list[len(self.cam_im_list) - self.num_frames:]):
 				time_to_collision = collision_time - im[0].time_stamp #time stamp the same for im[0] and im[1]
-				airsim.write_file(os.path.normpath(os.path.join(self.fold_path,'flight' +  "_"  + "rgb" + "_" +  "danger" + str(self.flight_num)  + '_' + str(idx) + "_" + str(time_to_collision) + '.png')), im[0].image_data_uint8)
+				airsim.write_file(os.path.normpath(os.path.join(self.fold_path,'flight' +  "_"  + "rgb" + "_" +  "danger" + '_' + str(self.flight_num)  + '_' + str(idx) + "_" + str(time_to_collision) + '.png')), im[0].image_data_uint8)
 				depth = im[1]
 				depth_float = np.array(depth.image_data_float, dtype=np.float32)
 				depth_2d = depth_float.reshape(depth.height, depth.width)
-				depth_im = np.array(depth_2d * 255, dtype=np.uint8)
+				depth_im = np.array(depth_2d * 65535, dtype=np.uint16)
 				cv2.imwrite(os.path.normpath(os.path.join(self.fold_path,'flight' "_"  + "depth" + "_" +"danger"  + '_' +  str(self.flight_num)  + '_' + str(idx) + "_" +  str(time_to_collision) + '.png')), depth_im)
 				state_ind = len(self.state_list) - self.num_frames + idx #Want state corresponding to 
-				linear_velocity = self.state_list[idx].kinematics_estimated.linear_velocity
-				angular_velocity = self.state_list[idx].kinematics_estimated.angular_velocity
+				linear_velocity = self.state_list[state_ind].kinematics_estimated.linear_velocity
+				angular_velocity = self.state_list[state_ind].kinematics_estimated.angular_velocity
 				x_lin_vel, y_lin_vel, z_lin_vel, x_ang_vel, y_ang_vel, z_ang_vel = linear_velocity.x_val, linear_velocity.y_val, linear_velocity.z_val, angular_velocity.x_val, angular_velocity.y_val, angular_velocity.z_val
 				row = [str(self.flight_num), 'danger', str(idx), str(x_lin_vel),str(y_lin_vel), str(z_lin_vel), str(x_ang_vel), str(y_ang_vel), str(z_ang_vel)]
 				with open(self.csv_path, 'a') as csvFile:
@@ -159,7 +162,7 @@ class straight_crash:
 		self.csv_path = os.path.join(self.fold_path, "data.csv") #Create path for csv file
 		with open(self.csv_path, 'w') as csvFile: #Create new csv file, need to make new folder for each run first
 			writer = csv.writer(csvFile)
-			writer.writerow(['flight_num','image_label','label_num', 'x_lin_vel','y_lin_vel','z_lin_vel','x_ang_vel','y_ang_vel','z_ang_vel'])
+			writer.writerow(['flight_num','image_label','label_num', 'x_lin_vel','y_lin_vel','z_lin_vel','x_ang_vel','y_ang_vel','z_ang_vel', "time_step:"+str(self.time_step), "speed:"+str(self.speed), "z_height:"+str(self.z_height)])
 
 if __name__ == '__main__':
 	x = straight_crash()
