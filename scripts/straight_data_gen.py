@@ -20,10 +20,10 @@ class straight_crash:
 		self.z_height = -1.1 #Define height to run trials at  ##-.5 for realistic environment and xx for office space
 		self.speed = 5 #Define speed to fly straight at
 		self.alpha = 5000 #Scale's how far ahead next waypoint is, where x_new = x - alpha*sin(theta), y_new = y + alpha*cos(theta)
-		self.x_min = -2
-		self.x_max = 2
-		self.y_min = -2.5
-		self.y_max = 2.5
+		self.x_min = -7
+		self.x_max = 7
+		self.y_min = -5
+		self.y_max = 10
 		self.pitch = 0
 		self.roll = 0
 		self.alpha = 5000 # = 0
@@ -42,6 +42,7 @@ class straight_crash:
 		print("New pose")
 		print (x,y)
 		yaw = np.random.uniform(-np.pi, np.pi)
+		self.speed = np.random.uniform(1, 5)
 		position = airsim.Vector3r(x , y, self.z_height)
 		heading = airsim.utils.to_quaternion(self.pitch, self.roll, yaw)
 		pose = airsim.Pose(position, heading)
@@ -107,7 +108,8 @@ class straight_crash:
 				linear_velocity = self.state_list[state_ind].kinematics_estimated.linear_velocity
 				angular_velocity = self.state_list[state_ind].kinematics_estimated.angular_velocity
 				x_lin_vel, y_lin_vel, z_lin_vel, x_ang_vel, y_ang_vel, z_ang_vel = linear_velocity.x_val, linear_velocity.y_val, linear_velocity.z_val, angular_velocity.x_val, angular_velocity.y_val, angular_velocity.z_val
-				row = [str(self.flight_num), 'safe', str(idx),str(x_lin_vel),str(y_lin_vel), str(z_lin_vel), str(x_ang_vel), str(y_ang_vel), str(z_ang_vel)]
+				#row = [str(self.flight_num), 'safe', str(idx),str(x_lin_vel),str(y_lin_vel), str(z_lin_vel), str(x_ang_vel), str(y_ang_vel), str(z_ang_vel)]
+				row = [str(self.flight_num), 'safe', str(idx),str(x_lin_vel),str(y_lin_vel), str(z_lin_vel), str(x_ang_vel), str(y_ang_vel), str(z_ang_vel), self.speed]
 				with open(self.csv_path, 'a') as csvFile:
 					writer = csv.writer(csvFile)
 					writer.writerow(row)
@@ -131,7 +133,8 @@ class straight_crash:
 				linear_velocity = self.state_list[state_ind].kinematics_estimated.linear_velocity
 				angular_velocity = self.state_list[state_ind].kinematics_estimated.angular_velocity
 				x_lin_vel, y_lin_vel, z_lin_vel, x_ang_vel, y_ang_vel, z_ang_vel = linear_velocity.x_val, linear_velocity.y_val, linear_velocity.z_val, angular_velocity.x_val, angular_velocity.y_val, angular_velocity.z_val
-				row = [str(self.flight_num), 'danger', str(idx), str(x_lin_vel),str(y_lin_vel), str(z_lin_vel), str(x_ang_vel), str(y_ang_vel), str(z_ang_vel)]
+				#row = [str(self.flight_num), 'danger', str(idx), str(x_lin_vel),str(y_lin_vel), str(z_lin_vel), str(x_ang_vel), str(y_ang_vel), str(z_ang_vel)]
+				row = [str(self.flight_num), 'danger', str(idx),str(x_lin_vel),str(y_lin_vel), str(z_lin_vel), str(x_ang_vel), str(y_ang_vel), str(z_ang_vel), self.speed]
 				with open(self.csv_path, 'a') as csvFile:
 					writer = csv.writer(csvFile)
 					writer.writerow(row)
@@ -162,7 +165,8 @@ class straight_crash:
 		self.csv_path = os.path.join(self.fold_path, "data.csv") #Create path for csv file
 		with open(self.csv_path, 'w') as csvFile: #Create new csv file, need to make new folder for each run first
 			writer = csv.writer(csvFile)
-			writer.writerow(['flight_num','image_label','label_num', 'x_lin_vel','y_lin_vel','z_lin_vel','x_ang_vel','y_ang_vel','z_ang_vel', "time_step:"+str(self.time_step), "speed:"+str(self.speed), "z_height:"+str(self.z_height)])
+			#writer.writerow(['flight_num','image_label','label_num', 'x_lin_vel','y_lin_vel','z_lin_vel','x_ang_vel','y_ang_vel','z_ang_vel', "time_step:"+str(self.time_step), "speed:"+str(self.speed), "z_height:"+str(self.z_height)])
+			writer.writerow(['flight_num','image_label','label_num', 'x_lin_vel','y_lin_vel','z_lin_vel','x_ang_vel','y_ang_vel','z_ang_vel', "speed:"+str(self.speed), "time_step:"+str(self.time_step), "z_height:"+str(self.z_height)])
 
 if __name__ == '__main__':
 	x = straight_crash()
