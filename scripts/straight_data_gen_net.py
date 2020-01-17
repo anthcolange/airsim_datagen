@@ -56,7 +56,8 @@ class straight_crash:
 		#print("New pose")
 		#print (x,y)
 		yaw = np.random.uniform(-np.pi, np.pi)
-		self.speed = np.random.uniform(1, 5)
+		#self.speed = np.random.uniform(1, 5)
+		self.speed = 1
 		position = airsim.Vector3r(x , y, self.z_height)
 		heading = airsim.utils.to_quaternion(self.pitch, self.roll, yaw)
 		pose = airsim.Pose(position, heading)
@@ -130,7 +131,7 @@ class straight_crash:
 		im_list_grey = []
 		for img_rgb in im_list:
 			img_rgb = np.fromstring(img_rgb[0].image_data_uint8, dtype=np.uint8).reshape(img_rgb[0].height, img_rgb[0].width, 3) 
-			img_rgb = np.flipud(img_rgb)
+			#img_rgb = np.flipud(img_rgb)
 			img_rgb = Image.fromarray(img_rgb)
 			im_list_grey.append(self.transform(img_rgb))
 		im_list_grey = torch.stack(im_list_grey) 
@@ -138,5 +139,6 @@ class straight_crash:
 
 if __name__ == '__main__':
 	model = DroNetExt(5)
+	model.load_state_dict(torch.load("9.weights"))
 	x = straight_crash(model)
 	x.reset_pose()
