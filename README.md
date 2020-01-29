@@ -20,3 +20,10 @@ Each of these trajectories has the fpv frames of the drone saved and the first a
 ## Image settings
 1. Images changed to VGA 640x480 by settings.json
 2. Replace files of the same name, stored in ~/Documents/AirSim with this one.
+
+##TO DO
+1.Bias saved safe images to be closer to wall
+2.Make speed more consistent
+3.Log time in CSV rather than file name
+4.Get sample rate between 20-60Hz
+5.Get flights to initialize faster
