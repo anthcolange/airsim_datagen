@@ -22,8 +22,8 @@ Each of these trajectories has the fpv frames of the drone saved and the first a
 2. Replace files of the same name, stored in ~/Documents/AirSim with this one.
 
 ## TO DO
-1.Bias saved safe images to be closer to wall
-2.Make speed more consistent
-3.Log time in CSV rather than file name
-4.Get sample rate between 20-60Hz
-5.Get flights to initialize faster
+1. Bias saved safe images to be closer to wall
+2. Make speed more consistent
+3. Log time in CSV rather than file name
+4. Get sample rate between 20-60Hz
+5. Get flights to initialize faster
