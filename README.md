@@ -22,9 +22,17 @@ Each of these trajectories has the fpv frames of the drone saved and the first a
 2. Replace files of the same name, stored in ~/Documents/AirSim with this one.
 
 ## TO DO
-1. Bias saved safe images to be closer to wall
-2. Make speed more consistent
-3. Log time in CSV rather than file name
-4. Get sample rate between 20-60Hz
-5. Get flights to initialize faster
-6. Add delay between crash and saving danger images
+1. ~~Bias saved safe images to be closer to wall~~
+2. ~~Make speed more consistent~~
+3. ~~Log time in CSV rather than file name~~
+4. ~~Get sample rate between 20-60Hz~~
+5. ~~Get flights to initialize faster~~
+6. ~~Add delay between crash and saving danger images~~
+7. ~~Increase speed ~~
+8. ~~Add new text file with all params~~
+
+##Speed increase##
+Use new config file with "ViewMode": "NoDisplay"
+Changes in clock speed of minimal use when bottlenecked by image grabbing so much
+Enter ./AirSimExe.sh -windowed -NoVSync -BENCHMARK in Unreal terminal, opened with ~
+
