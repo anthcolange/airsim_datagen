@@ -1,6 +1,8 @@
 {
   "SeeDocsAt": "https://github.com/Microsoft/AirSim/blob/master/docs/settings.md",
   "SettingsVersion": 1.2,
+  "ClockSpeed": 1,
+  "ViewMode": "NoDisplay",
   "CameraDefaults": {
    "CaptureSettings": [
   {
@@ -9,6 +11,7 @@
     "Height": 480
 
    },
+
 {
     "ImageType": 1,
     "Width": 640,
