@@ -33,7 +33,7 @@ class straight_crash:
 		self.wait_frames = 20
 		self.time_step = .05  #Time between images taken 
 		self.num_frames = 5 #How many frames we want of safe and dangerous for each flight
-		self.gap = 0.3 #Distance in meters from collision to give danger reading
+		self.gap = 0.4 #Distance in meters from collision to give danger reading
 		self.last_collision_stamp = 0 #initialize timestep for collision
 		self.cam_im_list = []
 		self.state_list = []
@@ -41,37 +41,36 @@ class straight_crash:
 
 	#Define initial position and heading and set pose to match these, should call this after every colision
 	def reset_pose(self):
-		print ("resetting pose")
+		#print ("resetting pose")
 		x = np.random.uniform(self.x_min, self.x_max)
 		y = np.random.uniform(self.y_min, self.y_max)
 		#x = 0
 		#y = 0
 		#yaw = -np.pi/2
-		print("New pose")
-		print (x,y)
+		print("New pose: " + str(x) + ',' + str(y))
 		yaw = np.random.uniform(-np.pi, np.pi)
 		position = airsim.Vector3r(x , y, self.z_height)
 		heading = airsim.utils.to_quaternion(self.pitch, self.roll, yaw)
 		pose = airsim.Pose(position, heading)
-		print("set_yaw")
+		#print("set_yaw")
 		self.client.simSetVehiclePose(pose, True) #Set yaw angle
 		self.client.moveToPositionAsync(x,y, self.z_height, .5).join()
 		self.client.hoverAsync()
 		time.sleep(2)
 		#Generate waypoint very far in direction drone is facing
-		self.waypoint(x, y, yaw)
+		return self.waypoint(x, y, yaw)
 
 	def waypoint(self, x, y, yaw):
 		#Generate waypoint very far in direction drone is facing
-		print ("Moving vehicles")
+		#print ("Moving vehicles")
 		pose = self.client.simGetVehiclePose()
 		x = pose.position.x_val
 		y = pose.position.y_val
 		z = pose.position.z_val
 		x = x + self.alpha * np.cos(yaw)
 		y = y + self.alpha * np.sin(yaw)
-		print("Move vehicle to ")
-		print(x, y, self.z_height, self.speed)
+		#print("Move vehicle to: ")
+		#print(x, y, self.z_height)
 		self.client.moveToPositionAsync(x, y, z, self.speed, drivetrain = airsim.DrivetrainType.ForwardOnly, yaw_mode = airsim.YawMode(False,yaw))
 
 		#self.client.moveByVelocityAsync(self.speed* np.cos(yaw),self.speed * np.sin(yaw) ,0,10)
@@ -79,8 +78,7 @@ class straight_crash:
 		self.state_list = [] #Store list of drone states
 		iters = 0
 		while True: #Keep moving to position and storing images until a crash happens
-		#https://github.com/microsoft/AirSim-NeurIPS2019-Drone-Racing/issues/111
-			print(iters)
+		#https://github.com/microsoft/AirSim-NeurIPS2019-Drone-Racing/issues/111: ./AirSimExe.sh -windowed -NoVSync -BENCHMARK
 			self.client.simPause(True)
 			if iters > self.wait_frames:
 				self.im_store()
@@ -94,12 +92,13 @@ class straight_crash:
 	 			self.image_handle(collision_info) #Save relevant images to a file
 	 			self.last_collision_stamp = new_time_stamp
 	 			print ("collision")
+	 			print(self.flight_num)
 	 			self.client.reset()
 	 			self.client.enableApiControl(True)
 	 			self.client.armDisarm(True)
 	 			self.client.takeoffAsync()
 	 			time.sleep(.5)
-	 			self.reset_pose()
+	 			return None #Prevent stackoverflow, return None and call reset_pose
 			else:
 				self.client.simPause(False)
 				time.sleep(self.time_step) #More or less store images every timestep
@@ -121,6 +120,7 @@ class straight_crash:
 			gap_time = math.floor(self.gap / self.speed) #Determine time needed from collision to give danger reading
 			del_ind = math.floor(gap_time / self.time_step) + self.num_frames #Number of frames to delete (add num_frames because need full set of frames when giving result)
 			del self.cam_im_list[-del_ind:]
+			del self.state_list[-del_ind:]
 
 			#Define range of indexes to sample from for safe images
 			min_ind = 0
@@ -230,4 +230,5 @@ class straight_crash:
 
 if __name__ == '__main__':
 	x = straight_crash()
-	x.reset_pose()
+	while x.flight_num < 1200:
+		_ = x.reset_pose()
