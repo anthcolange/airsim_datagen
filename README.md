@@ -28,7 +28,7 @@ Each of these trajectories has the fpv frames of the drone saved and the first a
 4. ~~Get sample rate between 20-60Hz~~
 5. ~~Get flights to initialize faster~~
 6. ~~Add delay between crash and saving danger images~~
-7. ~~Increase speed ~~
+7. ~~Increase speed~~
 8. ~~Add new text file with all params~~
 
 ##Speed increase##
