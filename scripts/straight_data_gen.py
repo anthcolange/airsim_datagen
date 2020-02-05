@@ -80,6 +80,7 @@ class straight_crash:
 		while True: #Keep moving to position and storing images until a crash happens
 		#https://github.com/microsoft/AirSim-NeurIPS2019-Drone-Racing/issues/111: ./AirSimExe.sh -windowed -NoVSync -BENCHMARK
 			self.client.simPause(True)
+			print(iters)
 			if iters > self.wait_frames:
 				self.im_store()
 			collision_info = self.client.simGetCollisionInfo() #Log collision info
