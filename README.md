@@ -31,7 +31,7 @@ Each of these trajectories has the fpv frames of the drone saved and the first a
 7. ~~Increase speed~~
 8. ~~Add new text file with all params~~
 
-##Speed increase##
+## Speed increase
 Use new config file with "ViewMode": "NoDisplay"
 Changes in clock speed of minimal use when bottlenecked by image grabbing so much
 Enter ./AirSimExe.sh -windowed -NoVSync -BENCHMARK in Unreal terminal, opened with ~
