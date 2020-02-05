@@ -20,7 +20,7 @@ class straight_crash:
 		self.client.armDisarm(True)
 		self.client.takeoffAsync().join()
 		self.z_height = -1.1 #Define height to run trials at  ##-.5 for realistic environment and xx for office space
-		self.speed = 5 #Define speed to fly straight at
+		self.speed = 3 #Define speed to fly straight at
 		self.alpha = 5000 #Scale's how far ahead next waypoint is, where x_new = x - alpha*sin(theta), y_new = y + alpha*cos(theta)
 		self.x_min = -7
 		self.x_max = 7
@@ -30,7 +30,8 @@ class straight_crash:
 		self.roll = 0
 		self.alpha = 5000 # = 0
 		self.flight_num = 0
-		self.time_step = .05 #Time between images taken 
+		self.wait_frames = 20
+		self.time_step = .05  #Time between images taken 
 		self.num_frames = 5 #How many frames we want of safe and dangerous for each flight
 		self.gap = 0.3 #Distance in meters from collision to give danger reading
 		self.last_collision_stamp = 0 #initialize timestep for collision
@@ -63,20 +64,31 @@ class straight_crash:
 	def waypoint(self, x, y, yaw):
 		#Generate waypoint very far in direction drone is facing
 		print ("Moving vehicles")
+		pose = self.client.simGetVehiclePose()
+		x = pose.position.x_val
+		y = pose.position.y_val
+		z = pose.position.z_val
 		x = x + self.alpha * np.cos(yaw)
 		y = y + self.alpha * np.sin(yaw)
 		print("Move vehicle to ")
 		print(x, y, self.z_height, self.speed)
-		self.client.moveToPositionAsync(x, y, self.z_height, self.speed)
+		self.client.moveToPositionAsync(x, y, z, self.speed, drivetrain = airsim.DrivetrainType.ForwardOnly, yaw_mode = airsim.YawMode(False,yaw))
+
+		#self.client.moveByVelocityAsync(self.speed* np.cos(yaw),self.speed * np.sin(yaw) ,0,10)
 		self.cam_im_list = [] #Store list of images of flight
 		self.state_list = [] #Store list of drone states
+		iters = 0
 		while True: #Keep moving to position and storing images until a crash happens
+		#https://github.com/microsoft/AirSim-NeurIPS2019-Drone-Racing/issues/111
+			print(iters)
 			self.client.simPause(True)
-			self.im_store()
+			if iters > self.wait_frames:
+				self.im_store()
 			collision_info = self.client.simGetCollisionInfo() #Log collision info
 			new_time_stamp = collision_info.time_stamp
 			#if collision_info.has_collided: ##Apparently might need to change depending on if windows or not 
 			if (new_time_stamp != self.last_collision_stamp and new_time_stamp != 0) or collision_info.has_collided: #Check if collision has new timestamp to validate new collision happened
+
 	 			self.client.simPause(False)
 	 			#self.im_thread.cancel()#Kill thread 
 	 			self.image_handle(collision_info) #Save relevant images to a file
@@ -91,6 +103,7 @@ class straight_crash:
 			else:
 				self.client.simPause(False)
 				time.sleep(self.time_step) #More or less store images every timestep
+				iters += 1
 
 	def im_store(self):
 		#Store images on timer from thread
@@ -190,10 +203,10 @@ class straight_crash:
 		self.text_path = os.path.join(self.fold_path, "params.txt") 
 		with open(self.csv_path, 'w') as csvFile: #Create new csv file, need to make new folder for each run first
 			writer = csv.writer(csvFile)
-			writer.writerow(['flight_num','image_label','label_num', 'x_lin_vel','y_lin_vel','z_lin_vel','x_ang_vel','y_ang_vel','z_ang_vel', "current_speed", "commanded_speed", "time_to_collision", "safe_frame_start", "total_frames"])
+			writer.writerow(['flight_num','image_label','label_num', 'x_lin_vel','y_lin_vel','z_lin_vel','x_ang_vel','y_ang_vel','z_ang_vel', "current_speed", "commanded_speed", "time_to_collision", "safe_frame_start", "total_frames, wait_frames"])
 		with open(self.text_path, 'w') as out: #Create new csv file, need to make new folder for each run first
-			line1, line2, line3, line4, line5, line6, line7, line8, line9 = 'z_height: ' + str(self.z_height), "speed: " + str(self.speed), "x_min: " + str(self.x_min), "x_max: " + str(self.x_max), "y_min: " + str(self.y_min), "y_max: " + str(self.y_max), "alpha: " + str(self.alpha), "num_frames: " + str(self.num_frames), "gap: " + str(self.gap)
-			out.write('{}\n{}\n{}\n{}\n{}\n{}\n{}\n{}\n{}\n'.format(line1, line2, line3, line4, line5, line6, line7, line8, line9))
+			line1, line2, line3, line4, line5, line6, line7, line8, line9, line10 = 'z_height: ' + str(self.z_height), "speed: " + str(self.speed), "x_min: " + str(self.x_min), "x_max: " + str(self.x_max), "y_min: " + str(self.y_min), "y_max: " + str(self.y_max), "alpha: " + str(self.alpha), "num_frames: " + str(self.num_frames), "gap: " + str(self.gap), 'wait_frames:' + str(self.wait_frames)
+			out.write('{}\n{}\n{}\n{}\n{}\n{}\n{}\n{}\n{}\n{}\n'.format(line1, line2, line3, line4, line5, line6, line7, line8, line9, line10))
 
 	def generate_index(self, min_ind, max_ind):
 		"""

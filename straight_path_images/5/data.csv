@@ -1,0 +1,1 @@
+flight_num,image_label,label_num,x_lin_vel,y_lin_vel,z_lin_vel,x_ang_vel,y_ang_vel,z_ang_vel,current_speed,commanded_speed,time_to_collision,safe_frame_start,total_frames
