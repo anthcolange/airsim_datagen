@@ -27,3 +27,4 @@ Each of these trajectories has the fpv frames of the drone saved and the first a
 3. Log time in CSV rather than file name
 4. Get sample rate between 20-60Hz
 5. Get flights to initialize faster
+6. Add delay between crash and saving danger images
