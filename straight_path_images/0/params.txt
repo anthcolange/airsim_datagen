@@ -1,0 +1,1 @@
+z_height-1.1speed5x_min-7x_max7y_min-5y_max10alpha5000num_frames5gap0.3

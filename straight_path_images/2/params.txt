@@ -1,0 +1,9 @@
+z_height-1.1
+speed5
+x_min-7
+x_max7
+y_min-5
+y_max10
+alpha5000
+num_frames5
+gap0.3
