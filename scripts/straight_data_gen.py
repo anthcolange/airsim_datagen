@@ -19,17 +19,18 @@ class straight_crash:
 		self.client.enableApiControl(True)
 		self.client.armDisarm(True)
 		self.client.takeoffAsync().join()
-		self.z_height = -1.1 #Define height to run trials at  ##-.5 for realistic environment and xx for office space
+		self.z_height = -.6 #Define height to run trials at  ##-.5 for realistic environment and xx for office space
 		self.speed = 3 #Define speed to fly straight at
 		self.alpha = 5000 #Scale's how far ahead next waypoint is, where x_new = x - alpha*sin(theta), y_new = y + alpha*cos(theta)
-		self.x_min = -7
-		self.x_max = 7
-		self.y_min = -5
-		self.y_max = 10
+		self.x_min = -11
+		self.x_max = 10
+		self.y_min = -7
+		self.y_max = 6
 		self.pitch = 0
 		self.roll = 0
 		self.alpha = 5000 # = 0
 		self.flight_num = 0
+		self.flight_list = []
 		self.wait_frames = 20
 		self.time_step = .05  #Time between images taken 
 		self.num_frames = 5 #How many frames we want of safe and dangerous for each flight
@@ -102,7 +103,7 @@ class straight_crash:
 	 			return None #Prevent stackoverflow, return None and call reset_pose
 			else:
 				self.client.simPause(False)
-				time.sleep(self.time_step) #More or less store images every timestep
+				time.sleep(self.time_step)
 				iters += 1
 
 	def im_store(self):
@@ -115,13 +116,12 @@ class straight_crash:
 	def image_handle(self, collision_info):
 		#Saves images stored in im_list from flight and logs times in nanoseconds
 		#Depth image handling: https://github.com/microsoft/AirSim/issues/921
+		gap_time = math.floor(self.gap / self.speed) #Determine time needed from collision to give danger reading
+		del_ind = math.floor(gap_time / self.time_step) + self.num_frames #Number of frames to delete (add num_frames because need full set of frames when giving result
+		del self.cam_im_list[-del_ind:]
+		del self.state_list[-del_ind:]
 		if len(self.cam_im_list) >= 2*self.num_frames: #Check if enough frames to generate safe and danger images
 
-			#Delete frames collected past gap distance from collision
-			gap_time = math.floor(self.gap / self.speed) #Determine time needed from collision to give danger reading
-			del_ind = math.floor(gap_time / self.time_step) + self.num_frames #Number of frames to delete (add num_frames because need full set of frames when giving result)
-			del self.cam_im_list[-del_ind:]
-			del self.state_list[-del_ind:]
 
 			#Define range of indexes to sample from for safe images
 			min_ind = 0
@@ -204,7 +204,7 @@ class straight_crash:
 		self.text_path = os.path.join(self.fold_path, "params.txt") 
 		with open(self.csv_path, 'w') as csvFile: #Create new csv file, need to make new folder for each run first
 			writer = csv.writer(csvFile)
-			writer.writerow(['flight_num','image_label','label_num', 'x_lin_vel','y_lin_vel','z_lin_vel','x_ang_vel','y_ang_vel','z_ang_vel', "current_speed", "commanded_speed", "time_to_collision", "safe_frame_start", "total_frames, wait_frames"])
+			writer.writerow(['flight_num','image_label','label_num', 'x_lin_vel','y_lin_vel','z_lin_vel','x_ang_vel','y_ang_vel','z_ang_vel', "current_speed", "commanded_speed", "time_to_collision", "safe_frame_start", "total_frames"])
 		with open(self.text_path, 'w') as out: #Create new csv file, need to make new folder for each run first
 			line1, line2, line3, line4, line5, line6, line7, line8, line9, line10 = 'z_height: ' + str(self.z_height), "speed: " + str(self.speed), "x_min: " + str(self.x_min), "x_max: " + str(self.x_max), "y_min: " + str(self.y_min), "y_max: " + str(self.y_max), "alpha: " + str(self.alpha), "num_frames: " + str(self.num_frames), "gap: " + str(self.gap), 'wait_frames:' + str(self.wait_frames)
 			out.write('{}\n{}\n{}\n{}\n{}\n{}\n{}\n{}\n{}\n{}\n'.format(line1, line2, line3, line4, line5, line6, line7, line8, line9, line10))
@@ -225,7 +225,7 @@ class straight_crash:
 
 		depth_float = np.array(depth.image_data_float, dtype=np.float32)
 		depth_2d = depth_float.reshape(depth.height, depth.width)
-		depth_im = np.array(depth_2d * 65535, dtype=np.uint16)
+		depth_im = np.array(depth_2d * 255, dtype=np.uint8)
 		return depth_im
 
 
