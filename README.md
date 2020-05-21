@@ -30,6 +30,7 @@ Each of these trajectories has the fpv frames of the drone saved and the first a
 6. ~~Add delay between crash and saving danger images~~
 7. ~~Increase speed~~
 8. ~~Add new text file with all params~~
+9. ~~Re-write in CV Mode for idealized condiions~~
 
 ## Speed increase
 Use new config file with "ViewMode": "NoDisplay"
