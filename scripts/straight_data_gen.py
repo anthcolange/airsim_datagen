@@ -29,7 +29,7 @@ class straight_crash:
 		self.pitch = 0
 		self.roll = 0
 		self.alpha = 5000 # = 0
-		self.flight_num = 0
+		self.flight_num = 1140
 		self.flight_list = []
 		self.wait_frames = 20
 		self.time_step = .05  #Time between images taken 
