@@ -6,13 +6,13 @@ Straight line trajectory data generation picks a random starting point and comma
 Each of these are set to generate 1200 trajectories, where each trajectory saves the last 5 images as a danger label, and a random 5 consecutive frames probabilistically set to sample closer to the end as safe labels. In each case we are saving RGB + Depth images.
 
 All generation scripts in scripts/
-/straight_data_gen.py
+1./straight_data_gen.py
 	-Traditional data generation using drone dynamics and collision detection
-/straight_data_gen_callback(WIP)
+2./straight_data_gen_callback(WIP)
 	-Same as straight_data_gen but using threaded callback to grab data
-/straight_data_gen_cvmode
+3./straight_data_gen_cvmode
 	-Idealized mode with exact dynamics using CV mode. Collision determined by min_depth
-/straight_data_gen_net
+4./straight_data_gen_net
 	-Integrates NN to output prediction in real-time (built off of straight_data_gen)
 
 
