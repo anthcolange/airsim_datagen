@@ -2,38 +2,54 @@
 Generates drone flight fpv images frames using airsim simulator.
 
 ## Path generation
-Straight line trajectory data generation occurs in straight_data_gen.py. This picks a random starting point and commands the drone  to fly straight until a collision occurs. After a collision a new starting point is picked and the process repeats.
-Each of these trajectories has the fpv frames of the drone saved and the first and last 5 images are ultimately saved.
+Straight line trajectory data generation picks a random starting point and commands the drone to fly straight until a collision occurs. After a collision a new starting point is picked and the process repeats.
+Each of these are set to generate 1200 trajectories, where each trajectory saves the last 5 images as a danger label, and a random 5 consecutive frames probabilistically set to sample closer to the end as safe labels. In each case we are saving RGB + Depth images.
+
+All generation scripts in scripts/
+/straight_data_gen.py
+	-Traditional data generation using drone dynamics and collision detection
+/straight_data_gen_callback(WIP)
+	-Same as straight_data_gen but using threaded callback to grab data
+/straight_data_gen_cvmode
+	-Idealized mode with exact dynamics using CV mode. Collision determined by min_depth
+/straight_data_gen_net
+	-Integrates NN to output prediction in real-time (built off of straight_data_gen)
 
 
 ## Image storage
-*/straight_path_images*
-1. Stores images from straight line trajectories
+straight_path_images/
+1. Each time running a data generation script, a new folder is made here with index one larger than max index of folders in the directory. All data then saved to here.
 2. Naming
-  **flight_(type)_(flight_num)_(im_num).png**  
-		 -**type = {danger, safe}**  
+  **flight_(type)_(label)_(flight_num)_(im_num).png**  
+		 -**type = {rgb, depth}**  
+		 -**label = {safe, danger}**
         -danger means frame is of final 5 taken before crash  
-        -safe means frame is of initial 5 as start of flight  
-      -flight_num is which flight the image corresponds to, using 0 indexing  
-      -im_num is which frame of {danger, safe} the image is, using 0 indexing
+        -safe means frame is of random 5 before danger images  
+      	-flight_num is which flight the image corresponds to, using 0 indexing  
+      	-im_num is which frame of {danger, safe} the image is, using 0 indexing
       
 ## Image settings
-1. Images changed to VGA 640x480 by settings.json
-2. Replace files of the same name, stored in ~/Documents/AirSim with this one.
+settings.json
+1. Contains the AirSim settings 
+2. Replace files of the same name, stored in ~/Documents/AirSim with this one
+3. Images changed to VGA 640x480 
+4. CV Mode can be activated here by adding:   "SimMode": "ComputerVision"
+5. Headless display can be done with "ViewMode": "NoDisplay"
 
 ## TO DO
-1. ~~Bias saved safe images to be closer to wall~~
-2. ~~Make speed more consistent~~
-3. ~~Log time in CSV rather than file name~~
-4. ~~Get sample rate between 20-60Hz~~
-5. ~~Get flights to initialize faster~~
-6. ~~Add delay between crash and saving danger images~~
-7. ~~Increase speed~~
-8. ~~Add new text file with all params~~
-9. ~~Re-write in CV Mode for idealized condiions~~
+1. Figure out why NoDisplay mode dims output images
+2. Finish or scrap callback method
+3. 
 
-## Speed increase
-Use new config file with "ViewMode": "NoDisplay"
-Changes in clock speed of minimal use when bottlenecked by image grabbing so much
+## Speed increase (WIP)
+Set "ViewMode": "NoDisplay"
 Enter ./AirSimExe.sh -windowed -NoVSync -BENCHMARK in Unreal terminal, opened with ~
+Changes in clock speed of minimal use when bottlenecked by image grabbing so much
 
+## Notebooks
+/Bias_sampling.ipynb
+	-Visualize the bias used for sampling safe images along a trajectory
+/Ground_Truth_ttc.ipynb
+	-Generate the ttcs for a dataset
+/KITTI_data_process.ipynb
+	-Visualize KITTI ttcs
