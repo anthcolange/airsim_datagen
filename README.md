@@ -39,7 +39,6 @@ settings.json
 ## TO DO
 1. Figure out why NoDisplay mode dims output images
 2. Finish or scrap callback method
-3. 
 
 ## Speed increase (WIP)
 Set "ViewMode": "NoDisplay"
@@ -47,9 +46,9 @@ Enter ./AirSimExe.sh -windowed -NoVSync -BENCHMARK in Unreal terminal, opened wi
 Changes in clock speed of minimal use when bottlenecked by image grabbing so much
 
 ## Notebooks
-/Bias_sampling.ipynb
+1. /Bias_sampling.ipynb
 	-Visualize the bias used for sampling safe images along a trajectory
-/Ground_Truth_ttc.ipynb
+2. /Ground_Truth_ttc.ipynb
 	-Generate the ttcs for a dataset
-/KITTI_data_process.ipynb
+3. /KITTI_data_process.ipynb
 	-Visualize KITTI ttcs
