@@ -7,7 +7,7 @@ Each of these are set to generate 1200 trajectories, where each trajectory saves
 
 All generation scripts in scripts/
 /straight_data_gen.py
-	+ -Traditional data generation using drone dynamics and collision detection
+	-Traditional data generation using drone dynamics and collision detection
 /straight_data_gen_callback(WIP)
 	-Same as straight_data_gen but using threaded callback to grab data
 /straight_data_gen_cvmode
