@@ -41,9 +41,8 @@ settings.json
 2. Finish or scrap callback method
 
 ## Speed increase (WIP)
-Set "ViewMode": "NoDisplay"
-Enter ./AirSimExe.sh -windowed -NoVSync -BENCHMARK in Unreal terminal, opened with ~
-Changes in clock speed of minimal use when bottlenecked by image grabbing so much
+1. Set "ViewMode": "NoDisplay"
+2. Enter ./AirSimExe.sh -windowed -NoVSync -BENCHMARK in Unreal terminal, opened with ~
 
 ## Notebooks
 1. /Bias_sampling.ipynb
