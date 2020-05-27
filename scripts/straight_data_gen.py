@@ -225,6 +225,7 @@ class straight_crash:
 
 		depth_float = np.array(depth.image_data_float, dtype=np.float32)
 		depth_2d = depth_float.reshape(depth.height, depth.width)
+		
 		depth_im = np.array(depth_2d * 255, dtype=np.uint8)
 		return depth_im
 

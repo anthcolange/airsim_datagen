@@ -113,7 +113,7 @@ class straight_crash:
 				depth_im = self.generate_depth_image(depth)
 				
 				#Save depth image
-				np.save(os.path.normpath(os.path.join(self.fold_path, 'flight' +  "_" + "depth" + "_" +"safe"  + '_' +  str(self.flight_num)  + '_' + str(idx))), depth_im)
+				np.savez_compressed(os.path.normpath(os.path.join(self.fold_path, 'flight' +  "_" + "depth" + "_" +"safe"  + '_' +  str(self.flight_num)  + '_' + str(idx))), depth_im)
 				#cv2.imwrite(os.path.normpath(os.path.join(self.fold_path, 'flight' +  "_" + "depth" + "_" +"safe"  + '_' +  str(self.flight_num)  + '_' + str(idx)+  '.png')), depth_im)
 
 				#find index of state being used, relative to initial list so can get state info
@@ -139,7 +139,7 @@ class straight_crash:
 				depth_im = self.generate_depth_image(depth)
 
 				#Save depth image
-				np.save(os.path.normpath(os.path.join(self.fold_path,'flight' +  "_"  + "depth" + "_" +"danger"  + '_' +  str(self.flight_num)  + '_' + str(idx))), depth_im)
+				np.savez_compressed(os.path.normpath(os.path.join(self.fold_path,'flight' +  "_"  + "depth" + "_" +"danger"  + '_' +  str(self.flight_num)  + '_' + str(idx))), depth_im)
 				#cv2.imwrite(os.path.normpath(os.path.join(self.fold_path,'flight' "_"  + "depth" + "_" +"danger"  + '_' +  str(self.flight_num)  + '_' + str(idx) +  '.png')), depth_im)
 
 				#find index of state being used, relative to initial list so can get state info
